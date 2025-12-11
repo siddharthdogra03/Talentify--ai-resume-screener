@@ -1,0 +1,16 @@
+# Python
+backend/venv/
+__pycache__/
+*.pyc
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+.DS_Store
+
+# Environment
+backend/.env
+
+# Uploads (heavy files)
+backend/uploads/
