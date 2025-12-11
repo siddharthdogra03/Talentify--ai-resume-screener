@@ -8,7 +8,7 @@ A full-stack web application that uses advanced AI, NLP, and BERT models to inte
 
 <img width="1838" height="923" alt="Screenshot 2025-10-04 205847" src="https://github.com/user-attachments/assets/aceab93c-4f5f-4398-beae-871c83425383" />
 
-<img width="1848" height="938" alt="Screenshot 2025-10-04 205801" src="https://github.com/user-attachments/assets/b42a58c6-9942-4e09-88aa-d6d0e73a5d99" />
+<img width="1919" height="984" alt="Image" src="https://github.com/user-attachments/assets/19ff2105-65a6-40c5-b42e-1e358bb6ec9e" />
 
 
 ## 📂 Project Structure
