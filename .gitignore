@@ -11,6 +11,7 @@ frontend/.vite/
 
 # Environment
 backend/.env
+frontend/.env
 
 # Uploads (heavy files)
 backend/uploads/

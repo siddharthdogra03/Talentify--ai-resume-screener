@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '../utils/supabaseClient';
 import { userAPI, authAPI, API_BASE_URL } from '../utils/api';
 
 export interface User {
@@ -236,13 +237,52 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
-  // Fetch notifications when user is authenticated
+
+
+  // Fetch notifications when user is authenticated and subscribe to changes
   useEffect(() => {
     if (user && user.id) {
+      // access initial fetch
       fetchNotifications();
-      // Poll for notifications every 30 seconds
-      const interval = setInterval(fetchNotifications, 30000);
-      return () => clearInterval(interval);
+
+      // Subscribe to real-time changes
+      const channel = supabase
+        .channel('public:notifications')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${user.id}`,
+          },
+          (payload) => {
+            const newNotification = payload.new as Notification;
+            // Add new notification to state
+            // Map DB fields if necessary, but payload.new matches DB structure
+            // Frontend Notification interface needs matching. 
+            // DB created_at is timestamp. payload.new has created_at.
+            // We might need to transform it if needed.
+            // Let's assume the payload matches fairly well or just cast it for now to avoid complexity,
+            // but strictly we should ensure 'timestamp' maps to 'created_at'.
+
+            const formattedNotification: Notification = {
+              id: newNotification.id || payload.new.id,
+              title: newNotification.title || payload.new.title,
+              message: newNotification.message || payload.new.message,
+              type: (newNotification.type as any) || payload.new.type,
+              read: newNotification.read || payload.new.read,
+              timestamp: (newNotification as any).created_at || payload.new.created_at
+            };
+
+            setNotifications((prev) => [formattedNotification, ...prev]);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }
   }, [user]);
 
