@@ -147,34 +147,7 @@ def signup():
 
     if not supabase:
         return jsonify({"message": "Database not connected. Signup is unavailable."}), 500
-@app.route('/api/update_profile', methods=['POST'])
-def update_profile():
-    if not supabase:
-         return jsonify({"message": "Database not connected."}), 500
 
-    data = request.json
-    email = data.get('email')
-    full_name = data.get('name') # Frontend sends 'name'
-    hr_id = data.get('hr_id')
-    position = data.get('position')
-    department = data.get('department')
-
-    if not email:
-        return jsonify({"message": "Email is required"}), 400
-
-    try:
-        # Update user in Supabase
-        response = supabase.table('users').update({
-            'name': full_name,
-            'hr_id': hr_id,
-            'position': position,
-            'department': department
-        }).eq('email', email).execute()
-        
-        return jsonify({"message": "Profile updated successfully"}), 200
-    except Exception as e:
-        print(f"Error updating profile: {e}")
-        return jsonify({"message": f"Error updating profile: {str(e)}"}), 500
     try:
         # Check if user already exists in Supabase 'users' table
         response = supabase.table('users').select('id', 'is_verified').eq('email', email).execute()
@@ -220,6 +193,37 @@ def update_profile():
         print(f"Supabase signup error: {e}")
         traceback.print_exc()
         return jsonify({"message": f"An error occurred during signup: {str(e)}"}), 500
+
+
+
+@app.route('/api/update_profile', methods=['POST'])
+def update_profile():
+    if not supabase:
+         return jsonify({"message": "Database not connected."}), 500
+
+    data = request.json
+    email = data.get('email')
+    full_name = data.get('name') # Frontend sends 'name'
+    hr_id = data.get('hr_id')
+    position = data.get('position')
+    department = data.get('department')
+
+    if not email:
+        return jsonify({"message": "Email is required"}), 400
+
+    try:
+        # Update user in Supabase
+        response = supabase.table('users').update({
+            'name': full_name,
+            'hr_id': hr_id,
+            'position': position,
+            'department': department
+        }).eq('email', email).execute()
+        
+        return jsonify({"message": "Profile updated successfully"}), 200
+    except Exception as e:
+        print(f"Error updating profile: {e}")
+        return jsonify({"message": f"Error updating profile: {str(e)}"}), 500
 
 
 @app.route('/api/login', methods=['POST'])
