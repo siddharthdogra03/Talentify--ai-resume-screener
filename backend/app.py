@@ -214,7 +214,7 @@ def update_profile():
     try:
         # Update user in Supabase
         response = supabase.table('users').update({
-            'name': full_name,
+            'full_name': full_name,
             'hr_id': hr_id,
             'position': position,
             'department': department

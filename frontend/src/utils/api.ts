@@ -99,19 +99,10 @@ export const userAPI = {
     position: string;
     department: string;
   }) => {
-    try {
-      // Try PUT first
-      return await apiCall('/select_role', {
-        method: 'PUT',
-        body: JSON.stringify(userData),
-      });
-    } catch (error) {
-      // Fallback to POST if PUT not available
-      return await apiCall('/select_role', {
-        method: 'POST',
-        body: JSON.stringify(userData),
-      });
-    }
+    return await apiCall('/update_profile', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
   },
 
   // Get user profile - fallback to current user info from token
