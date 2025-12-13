@@ -109,8 +109,18 @@ PORT=5000
 
 ```
 
+In the frontend directory, create a .env file.
+```bash
+VITE_SUPABASE_URL=""
+VITE_SUPABASE_ANON_KEY=""
+# Copy these from the backend .env file
+```
+
 ### 5. Database Setup (Supabase)
 Log in to your Supabase dashboard and run the following SQL query in the SQL Editor to create the users table.
+
+**Important**: After creating the tables, go to **Database -> Replication** (or Table Editor -> `notifications` settings) and **Enable Realtime** for the `notifications` table so the frontend receives updates.
+
 ```bash
 -- 1. Users Table
 CREATE TABLE users (
