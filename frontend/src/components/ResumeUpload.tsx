@@ -4,15 +4,16 @@ import { useApp } from '../context/AppContext';
 import { API_BASE_URL } from '../utils/api';
 
 const ResumeUpload: React.FC = () => {
-  const { 
-    goToPage, 
-    uploadedFiles, 
-    setUploadedFiles, 
-    setUploadedResumeIds, 
-    setLoading, 
-    setLoadingMessage 
+  const {
+    goToPage,
+    uploadedFiles,
+    setUploadedFiles,
+    setUploadedResumeIds,
+    setLoading,
+    setLoadingMessage,
+    user
   } = useApp();
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
 
@@ -28,10 +29,10 @@ const ResumeUpload: React.FC = () => {
     if (!files) return;
 
     const newFiles: File[] = [];
-    
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      
+
       if (uploadedFiles.length + newFiles.length >= 1000) {
         alert('Maximum 1000 files allowed');
         break;
@@ -85,12 +86,16 @@ const ResumeUpload: React.FC = () => {
       formData.append('files', file);
     });
 
+    if (user?.user_id || user?.id) {
+      formData.append('user_id', (user.user_id || user.id) as string);
+    }
+
     try {
       const response = await fetch(`${API_BASE_URL}/upload_resumes`, {
         method: 'POST',
         body: formData
       });
-      
+
       const data = await response.json();
 
       if (response.ok) {
