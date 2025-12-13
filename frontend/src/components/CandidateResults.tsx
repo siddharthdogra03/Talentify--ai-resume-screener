@@ -4,9 +4,9 @@ import { useApp } from '../context/AppContext';
 import { resumeAPI, dashboardAPI } from '../utils/api';
 
 const CandidateResults: React.FC = () => {
-  const { 
-    candidates, 
-    filteredCandidates, 
+  const {
+    candidates,
+    filteredCandidates,
     setFilteredCandidates,
     uploadedFiles,
     setShowModal,
@@ -58,9 +58,9 @@ const CandidateResults: React.FC = () => {
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFilters(prev => ({ 
-      ...prev, 
-      [name]: name.includes('Score') || name === 'showTop' ? parseInt(value) || 0 : value 
+    setFilters(prev => ({
+      ...prev,
+      [name]: name.includes('Score') || name === 'showTop' ? parseInt(value) || 0 : value
     }));
   };
 
@@ -80,6 +80,9 @@ const CandidateResults: React.FC = () => {
     try {
       const response = await resumeAPI.getResumeContent(candidate.resume_id);
       setModalData({
+        id: candidate.resume_id,
+        filename: candidate.filename,
+        filepath: candidate.filepath,  // Add filepath for better extension checking
         title: `${candidate.filename.split('.')[0]} - Resume`,
         content: response.content || 'Resume content not available.'
       });
@@ -102,10 +105,10 @@ const CandidateResults: React.FC = () => {
 
     try {
       const response = await resumeAPI.downloadResume({
-      resumeId: candidate.resume_id,
-      filepath: candidate.filepath
-    });
-      
+        resumeId: candidate.resume_id,
+        filepath: candidate.filepath
+      });
+
       // Create download link
       const blob = new Blob([response], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
@@ -136,11 +139,11 @@ const CandidateResults: React.FC = () => {
 
     setLoading(true);
     setLoadingMessage('Preparing filtered resumes download...');
-    
+
     try {
       const resumeIds = filteredCandidates
-        .filter(c => c.resume_id)
-        .map(c => c.resume_id);
+        .map(c => c.resume_id)
+        .filter((id): id is string => !!id);
 
       const response = await resumeAPI.downloadFilteredResumes({
         job_id: currentJobId,
@@ -158,7 +161,7 @@ const CandidateResults: React.FC = () => {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       } else {
-          alert('Unexpected response. Download failed. Please try again.');
+        alert('Unexpected response. Download failed. Please try again.');
       }
     } catch (error: any) {
       console.error("Error in downloadAllFiltered:", error);
@@ -176,7 +179,7 @@ const CandidateResults: React.FC = () => {
 
     setLoading(true);
     setLoadingMessage('Preparing all resumes download...');
-    
+
     try {
       const response = await resumeAPI.downloadAllResumes(currentJobId);
 
@@ -192,7 +195,7 @@ const CandidateResults: React.FC = () => {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       } else {
-          alert('Unexpected response. Download failed. Please try again.');
+        alert('Unexpected response. Download failed. Please try again.');
       }
 
     } catch (error: any) {
@@ -233,7 +236,7 @@ const CandidateResults: React.FC = () => {
     <div className="min-h-screen py-4 md:py-8">
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
-          
+
           {/* Header */}
           <div className="text-center mb-8 md:mb-12">
             <div className="inline-flex items-center gap-2 bg-green-100 px-3 py-2 md:px-4 md:py-2 rounded-full mb-4 md:mb-6">
@@ -357,8 +360,8 @@ const CandidateResults: React.FC = () => {
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
-              <button 
-                onClick={applyFilters} 
+              <button
+                onClick={applyFilters}
                 className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
               >
                 <Filter size={16} />
@@ -384,32 +387,32 @@ const CandidateResults: React.FC = () => {
               <span className="sm:hidden">Back</span>
             </button>
             {candidates.length > filters.showTop && (
-              <button 
-                onClick={toggleShowAll} 
+              <button
+                onClick={toggleShowAll}
                 className="flex items-center gap-2 px-4 md:px-6 py-3 bg-blue-100 text-blue-700 rounded-xl hover:bg-blue-200 transition-colors font-semibold"
               >
                 <Users size={16} />
                 {showingAll ? `Show Top ${filters.showTop}` : `Show All (${candidates.length})`}
               </button>
             )}
-            <button 
-              onClick={downloadAllFiltered} 
+            <button
+              onClick={downloadAllFiltered}
               className="flex items-center gap-2 px-4 md:px-6 py-3 bg-green-100 text-green-700 rounded-xl hover:bg-green-200 transition-colors font-semibold"
             >
               <FileDown size={16} />
               <span className="hidden sm:inline">Download Filtered ({filteredCandidates.length})</span>
               <span className="sm:hidden">Filtered ({filteredCandidates.length})</span>
             </button>
-            <button 
-              onClick={downloadAllResumes} 
+            <button
+              onClick={downloadAllResumes}
               className="flex items-center gap-2 px-4 md:px-6 py-3 bg-purple-100 text-purple-700 rounded-xl hover:bg-purple-200 transition-colors font-semibold"
             >
               <Archive size={16} />
               <span className="hidden sm:inline">All Resumes ({candidates.length})</span>
               <span className="sm:hidden">All ({candidates.length})</span>
             </button>
-            <button 
-              onClick={restartProcess} 
+            <button
+              onClick={restartProcess}
               className="flex items-center gap-2 px-4 md:px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl hover:from-orange-700 hover:to-red-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
             >
               <RotateCcw size={16} />
@@ -424,15 +427,14 @@ const CandidateResults: React.FC = () => {
                 <div key={candidate.id} className="bg-white/95 backdrop-blur-sm rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 hover:transform hover:scale-105 border border-gray-100/50 relative">
                   {/* Rank Badge */}
                   {index < 3 && (
-                    <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg ${
-                      index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600' :
+                    <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg ${index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600' :
                       index === 1 ? 'bg-gradient-to-r from-gray-400 to-gray-600' :
-                      'bg-gradient-to-r from-orange-400 to-orange-600'
-                    }`}>
+                        'bg-gradient-to-r from-orange-400 to-orange-600'
+                      }`}>
                       {index + 1}
                     </div>
                   )}
-                  
+
                   <div className="text-center mb-4">
                     <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl mx-auto mb-3 shadow-lg">
                       {candidate.filename.charAt(0).toUpperCase()}
@@ -526,7 +528,7 @@ const CandidateResults: React.FC = () => {
                 </div>
                 <div className="mt-4 p-4 bg-white/50 rounded-xl">
                   <div className="text-sm text-gray-600">
-                    💡 <strong>Tip:</strong> Use "Download Filtered" to get only the candidates that match your criteria, 
+                    💡 <strong>Tip:</strong> Use "Download Filtered" to get only the candidates that match your criteria,
                     or "Download All Resumes\" to get the complete collection for future reference.
                   </div>
                 </div>

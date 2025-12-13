@@ -812,6 +812,8 @@ def get_dashboard_data():
             formatted_results.append({
                 'id': res['resume_id'],
                 'name': resume_info.get('filename', 'Unknown').split('.')[0] if resume_info else 'Unknown',
+                'filename': resume_info.get('filename', 'Unknown') if resume_info else 'Unknown',
+                'filepath': resume_info.get('filepath', '') if resume_info else '',
                 'matchScore': res['match_score'],
                 'matchedSkills': res['matched_skills'],
                 'department': res.get('department_match', 'N/A'), # Note: Schema has department_match as boolean/text, check logic
@@ -895,6 +897,34 @@ def download_resume_file():
         return send_from_directory(app.config['UPLOAD_FOLDER'], unique_filename_on_server, as_attachment=True,download_name=original_filename, mimetype=mimetype or 'application/octet-stream')
     else:
         return jsonify({"message": "File not found on server or invalid path"}), 404
+
+@app.route('/api/resume_file/<resume_id>', methods=['GET'])
+def get_resume_file(resume_id):
+    if not supabase:
+         return jsonify({"message": "Database not connected."}), 500
+    
+    try:
+        response = supabase.table('resumes').select('filepath, filename').eq('id', resume_id).execute()
+        if response.data:
+            resume_data = response.data[0]
+            unique_filename = resume_data['filepath']
+            original_filename = resume_data['filename']
+            
+            full_filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+            
+            if os.path.exists(full_filepath):
+                 mimetype, _ = guess_type(original_filename)
+                 return send_from_directory(
+                     app.config['UPLOAD_FOLDER'], 
+                     unique_filename, 
+                     as_attachment=False, 
+                     mimetype=mimetype or 'application/octet-stream'
+                 )
+            
+        return jsonify({"message": "File not found"}), 404
+    except Exception as e:
+        print(f"Error fetching resume file: {e}")
+        return jsonify({"message": "Error fetching file"}), 500
 
 @app.route('/api/download_all_filtered_resumes', methods=['POST'])
 def download_all_filtered_resumes():

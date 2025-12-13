@@ -80,6 +80,12 @@ interface AppContextType {
   loadingMessage: string;
   setLoadingMessage: (message: string) => void;
 
+  // Resume Modal State
+  showResumeModal: boolean;
+  setShowResumeModal: (show: boolean) => void;
+  resumeModalData: any;
+  setResumeModalData: (data: any) => void;
+
   // Modals
   showModal: string | null;
   setShowModal: (modal: string | null) => void;
@@ -154,6 +160,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [loadingMessage, setLoadingMessage] = useState('Processing...');
   const [showModal, setShowModal] = useState<string | null>(null);
   const [modalData, setModalData] = useState<any>(null);
+  const [showResumeModal, setShowResumeModal] = useState(false);
+  const [resumeModalData, setResumeModalData] = useState<any>({});
   const [otpAction, setOtpAction] = useState<string | null>(null);
 
   // Load user session on app start
@@ -369,6 +377,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setLoading,
     loadingMessage,
     setLoadingMessage,
+
+    // Resume Modal State
+    showResumeModal,
+    setShowResumeModal,
+    resumeModalData,
+    setResumeModalData,
 
     // Modals
     showModal,
