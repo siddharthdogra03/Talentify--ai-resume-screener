@@ -1,7 +1,7 @@
 # Talentify: AI-Powered Resume Screening Platform
 A full-stack web application that uses advanced AI, NLP, and BERT models to intelligently screen, categorize, and rank resumes based on specific job requirements.
 
-
+- [
 ## Some Images
 
 <img width="1919" height="986" alt="Image" src="https://github.com/user-attachments/assets/58e26a0e-136f-4299-92a4-719c0bc0ec72" />
@@ -9,9 +9,7 @@ A full-stack web application that uses advanced AI, NLP, and BERT models to inte
 <img width="1838" height="923" alt="Screenshot 2025-10-04 205847" src="https://github.com/user-attachments/assets/aceab93c-4f5f-4398-beae-871c83425383" />
 
 <img width="1919" height="984" alt="Image" src="https://github.com/user-attachments/assets/19ff2105-65a6-40c5-b42e-1e358bb6ec9e" />
-
-
-## 📂 Project Structure
+ect Structure
 The project is organized with a root folder containing the backend and frontend directories.
 
 ```bash
@@ -102,12 +100,14 @@ npm install
 In the backend directory, create a .env file. 
 ```bash
 # Supabase Credentials
-SUPABASE_URL=https://your-project-ref.supabase.co
-SUPABASE_KEY=your_supabase_anon_key
+SUPABASE_URL=""
+SUPABASE_KEY=""
+# Replace with your actual Supabase Project URL and Anon Public Key
 
-# Gmail SMTP Credentials for OTP
-SMTP_USER=your.email@gmail.com
-SMTP_PASS=your_gmail_app_password
+SMTP_USER=''  # <--- IMPORTANT: Replace with your Gmail address
+SMTP_PASS=''
+PORT=5000
+
 ```
 
 ### 5. Database Setup (Supabase)
