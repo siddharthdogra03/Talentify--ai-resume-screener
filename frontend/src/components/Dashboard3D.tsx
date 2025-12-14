@@ -2,8 +2,9 @@ import React, { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Text, Float } from '@react-three/drei';
 import * as THREE from 'three';
+import { useApp } from '../context/AppContext';
 
-const Bar = ({ position, height, color, label }: { position: [number, number, number], height: number, color: string, label: string }) => {
+const Bar = ({ position, height, color, label, textColor }: { position: [number, number, number], height: number, color: string, label: string, textColor: string }) => {
     const meshRef = useRef<THREE.Mesh>(null);
     const [hovered, setHover] = useState(false);
 
@@ -32,7 +33,7 @@ const Bar = ({ position, height, color, label }: { position: [number, number, nu
             <Text
                 position={[0, -0.5, 0.5]}
                 fontSize={0.3}
-                color="white"
+                color={textColor}
                 anchorX="center"
                 anchorY="middle"
             >
@@ -43,6 +44,9 @@ const Bar = ({ position, height, color, label }: { position: [number, number, nu
 };
 
 const Dashboard3D: React.FC = () => {
+    const { theme } = useApp();
+    const textColor = theme === 'dark' ? 'white' : '#1f2937'; // gray-800 for light mode
+
     return (
         <div className="w-full h-[300px] bg-transparent">
             <Canvas camera={{ position: [0, 4, 8], fov: 50 }}>
@@ -51,9 +55,9 @@ const Dashboard3D: React.FC = () => {
                 <pointLight position={[-10, 5, 0]} intensity={0.5} color="#4f46e5" />
 
                 <group position={[0, -1, 0]} rotation={[0, -0.2, 0]}>
-                    <Bar position={[-2, 0, 0]} height={3} color="#60a5fa" label="Speed" />
-                    <Bar position={[0, 0, 0]} height={4.5} color="#818cf8" label="Accuracy" />
-                    <Bar position={[2, 0, 0]} height={2.5} color="#c084fc" label="Cost" />
+                    <Bar position={[-2, 0, 0]} height={3} color="#60a5fa" label="Speed" textColor={textColor} />
+                    <Bar position={[0, 0, 0]} height={4.5} color="#818cf8" label="Accuracy" textColor={textColor} />
+                    <Bar position={[2, 0, 0]} height={2.5} color="#c084fc" label="Cost" textColor={textColor} />
 
                     <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
                         <mesh position={[0, 4, 0]}>

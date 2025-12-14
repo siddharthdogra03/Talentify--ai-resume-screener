@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FileText, LogOut, User, Settings, Bell, ChevronDown, Menu, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
@@ -8,12 +8,37 @@ const Header: React.FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
+  const notificationRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleLogout = () => {
     setShowModal('logout');
     setShowUserMenu(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
+        setShowNotifications(false);
+      }
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const stepNames = ['Job Setup', 'Upload Resumes', 'Results'];
 
@@ -70,7 +95,7 @@ const Header: React.FC = () => {
           {/* User Menu */}
           <div className="flex items-center gap-2 md:gap-4">
             {/* Notifications - Desktop only */}
-            <div className="hidden md:block relative">
+            <div className="hidden md:block relative" ref={notificationRef}>
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
                 className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors"
@@ -149,7 +174,7 @@ const Header: React.FC = () => {
             </button>
 
             {/* User Dropdown - Desktop */}
-            <div className="hidden md:block relative">
+            <div className="hidden md:block relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className="flex items-center gap-2 md:gap-3 p-2 rounded-xl hover:bg-gray-100 transition-colors"
