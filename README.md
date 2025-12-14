@@ -104,7 +104,7 @@ SUPABASE_KEY=""
 # Replace with your actual Supabase Project URL and Anon Public Key
 
 SMTP_USER=''  # <--- IMPORTANT: Replace with your Gmail address
-SMTP_PASS=''
+SMTP_PASS='' # Generate App Password: https://myaccount.google.com/apppasswords
 PORT=5000
 
 ```
